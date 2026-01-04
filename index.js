@@ -27,12 +27,28 @@ function randomNumbers(min, max, options = {}) {
 
   // Check if any valid numbers exist
   const hasValidNumber = () => {
-    for (let i = min; i <= max; i++) {
-      if (!isExcluded(i)) {
-        return true;
-      }
+    const rangeSize = max - min + 1;
+    
+    // Optimize for range exclusions
+    if (typeof exclude === "object" && !Array.isArray(exclude)) {
+      const excludeStart = Math.max(exclude.start, min);
+      const excludeEnd = Math.min(exclude.end, max);
+      const excludeSize = excludeStart <= excludeEnd ? excludeEnd - excludeStart + 1 : 0;
+      return excludeSize < rangeSize;
     }
-    return false;
+    
+    // For array exclusions, count how many are actually in range
+    if (Array.isArray(exclude)) {
+      const excludedInRange = exclude.filter(num => num >= min && num <= max).length;
+      return excludedInRange < rangeSize;
+    }
+    
+    // Single number exclusion - only problematic if range size is 1
+    if (exclude >= min && exclude <= max) {
+      return rangeSize > 1;
+    }
+    
+    return true;
   };
 
   // Return null if no valid numbers exist
