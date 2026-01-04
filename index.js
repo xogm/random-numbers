@@ -11,6 +11,15 @@ function randomNumbers(min, max, options = {}) {
 
   const { exclude } = options;
 
+  // Helper to check if exclude is a valid range object
+  const isValidRangeObject = (obj) => {
+    return typeof obj === "object" && 
+           obj !== null && 
+           !Array.isArray(obj) && 
+           typeof obj.start === "number" && 
+           typeof obj.end === "number";
+  };
+
   const isExcluded = (num) => {
     if (exclude === undefined || exclude === null) {
       return false;
@@ -18,11 +27,8 @@ function randomNumbers(min, max, options = {}) {
 
     if (Array.isArray(exclude)) {
       return exclude.includes(num);
-    } else if (typeof exclude === "object" && exclude !== null) {
-      if (typeof exclude.start === "number" && typeof exclude.end === "number") {
-        return num >= exclude.start && num <= exclude.end;
-      }
-      return false; // Invalid range object
+    } else if (isValidRangeObject(exclude)) {
+      return num >= exclude.start && num <= exclude.end;
     } else if (typeof exclude === 'number') {
       return num === exclude;
     } else {
@@ -39,10 +45,7 @@ function randomNumbers(min, max, options = {}) {
     const rangeSize = max - min + 1;
     
     // Optimize for range exclusions
-    if (typeof exclude === "object" && !Array.isArray(exclude) && exclude !== null) {
-      if (typeof exclude.start !== "number" || typeof exclude.end !== "number") {
-        return true; // Invalid range object, treat as no exclusion
-      }
+    if (isValidRangeObject(exclude)) {
       const excludeStart = Math.max(exclude.start, min);
       const excludeEnd = Math.min(exclude.end, max);
       const excludeSize = excludeStart <= excludeEnd ? excludeEnd - excludeStart + 1 : 0;
@@ -62,7 +65,7 @@ function randomNumbers(min, max, options = {}) {
       return rangeSize > 1;
     }
     
-    return true;
+    return true; // Invalid exclusion types are treated as no exclusion
   };
 
   // Return null if no valid numbers exist
