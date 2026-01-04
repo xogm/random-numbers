@@ -23,8 +23,10 @@ function randomNumbers(min, max, options = {}) {
         return num >= exclude.start && num <= exclude.end;
       }
       return false; // Invalid range object
-    } else {
+    } else if (typeof exclude === 'number') {
       return num === exclude;
+    } else {
+      return false;
     }
   };
 
@@ -50,7 +52,7 @@ function randomNumbers(min, max, options = {}) {
     // For array exclusions, count how many are actually in range
     if (Array.isArray(exclude)) {
       const excludedInRange = exclude.reduce((count, num) => {
-        return count + (num >= min && num <= max ? 1 : 0);
+        return count + (typeof num === 'number' && num >= min && num <= max ? 1 : 0);
       }, 0);
       return excludedInRange < rangeSize;
     }
