@@ -25,6 +25,21 @@ function randomNumbers(min, max, options = {}) {
     }
   };
 
+  // Check if any valid numbers exist
+  const hasValidNumber = () => {
+    for (let i = min; i <= max; i++) {
+      if (!isExcluded(i)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Return null if no valid numbers exist
+  if (!hasValidNumber()) {
+    return null;
+  }
+
   let randomNumber;
 
   do {
