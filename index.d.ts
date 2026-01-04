@@ -1,13 +1,13 @@
-declare module "randomNumbers" {
+declare module "random-numbers-with-exclusions" {
   interface RandomNumbersOptions {
     exclude?: number | number[] | { start: number; end: number };
   }
 
   function randomNumbers(
     min: number,
-    max: number,
+    max?: number,
     options?: RandomNumbersOptions
-  ): number;
+  ): number | null;
 
   export = randomNumbers;
 }
