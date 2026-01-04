@@ -18,8 +18,11 @@ function randomNumbers(min, max, options = {}) {
 
     if (Array.isArray(exclude)) {
       return exclude.includes(num);
-    } else if (typeof exclude === "object") {
-      return num >= exclude.start && num <= exclude.end;
+    } else if (typeof exclude === "object" && exclude !== null) {
+      if (typeof exclude.start === "number" && typeof exclude.end === "number") {
+        return num >= exclude.start && num <= exclude.end;
+      }
+      return false; // Invalid range object
     } else {
       return num === exclude;
     }
@@ -34,7 +37,10 @@ function randomNumbers(min, max, options = {}) {
     const rangeSize = max - min + 1;
     
     // Optimize for range exclusions
-    if (typeof exclude === "object" && !Array.isArray(exclude)) {
+    if (typeof exclude === "object" && !Array.isArray(exclude) && exclude !== null) {
+      if (typeof exclude.start !== "number" || typeof exclude.end !== "number") {
+        return true; // Invalid range object, treat as no exclusion
+      }
       const excludeStart = Math.max(exclude.start, min);
       const excludeEnd = Math.min(exclude.end, max);
       const excludeSize = excludeStart <= excludeEnd ? excludeEnd - excludeStart + 1 : 0;
