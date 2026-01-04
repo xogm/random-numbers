@@ -49,7 +49,9 @@ function randomNumbers(min, max, options = {}) {
     
     // For array exclusions, count how many are actually in range
     if (Array.isArray(exclude)) {
-      const excludedInRange = exclude.filter(num => num >= min && num <= max).length;
+      const excludedInRange = exclude.reduce((count, num) => {
+        return count + (num >= min && num <= max ? 1 : 0);
+      }, 0);
       return excludedInRange < rangeSize;
     }
     
