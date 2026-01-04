@@ -12,7 +12,7 @@ function randomNumbers(min, max, options = {}) {
   const { exclude } = options;
 
   const isExcluded = (num) => {
-    if (exclude === undefined) {
+    if (exclude === undefined || exclude === null) {
       return false;
     }
 
@@ -27,6 +27,10 @@ function randomNumbers(min, max, options = {}) {
 
   // Check if any valid numbers exist
   const hasValidNumber = () => {
+    if (exclude === undefined || exclude === null) {
+      return true;
+    }
+    
     const rangeSize = max - min + 1;
     
     // Optimize for range exclusions
@@ -44,7 +48,7 @@ function randomNumbers(min, max, options = {}) {
     }
     
     // Single number exclusion - only problematic if range size is 1
-    if (exclude >= min && exclude <= max) {
+    if (typeof exclude === "number" && exclude >= min && exclude <= max) {
       return rangeSize > 1;
     }
     
